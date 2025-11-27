@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, FormEvent } from "react"
+import { useState, FormEvent, Suspense } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { useRegisterMutation } from "@/states/features/endpoints/auth/authApiSlice"
@@ -11,7 +11,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { toast } from "sonner"
 import RequireGuest from "@/components/auth/RequireGuest"
 
-export default function RegisterPage() {
+function RegisterForm() {
   const router = useRouter()
   const [register, { isLoading }] = useRegisterMutation()
 
@@ -96,121 +96,133 @@ export default function RegisterPage() {
   }
 
   return (
-    <RequireGuest>
-      <div className="min-h-screen flex items-center justify-center bg-background p-4">
-        <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold">Create an account</CardTitle>
-          <CardDescription>
-            Enter your information to create your account
-          </CardDescription>
-        </CardHeader>
-        <form onSubmit={handleSubmit}>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="first_name">First name</Label>
-                <Input
-                  id="first_name"
-                  name="first_name"
-                  type="text"
-                  placeholder="John"
-                  value={formData.first_name}
-                  onChange={handleChange}
-                  aria-invalid={!!errors.first_name}
-                  disabled={isLoading}
-                />
-                {errors.first_name && (
-                  <p className="text-sm text-destructive">{errors.first_name}</p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="last_name">Last name</Label>
-                <Input
-                  id="last_name"
-                  name="last_name"
-                  type="text"
-                  placeholder="Doe"
-                  value={formData.last_name}
-                  onChange={handleChange}
-                  aria-invalid={!!errors.last_name}
-                  disabled={isLoading}
-                />
-                {errors.last_name && (
-                  <p className="text-sm text-destructive">{errors.last_name}</p>
-                )}
-              </div>
-            </div>
+    <div className="min-h-screen flex items-center justify-center bg-background p-4">
+      <Card className="w-full max-w-md">
+      <CardHeader className="space-y-1">
+        <CardTitle className="text-2xl font-bold">Create an account</CardTitle>
+        <CardDescription>
+          Enter your information to create your account
+        </CardDescription>
+      </CardHeader>
+      <form onSubmit={handleSubmit}>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="first_name">First name</Label>
               <Input
-                id="email"
-                name="email"
-                type="email"
-                placeholder="name@example.com"
-                value={formData.email}
+                id="first_name"
+                name="first_name"
+                type="text"
+                placeholder="John"
+                value={formData.first_name}
                 onChange={handleChange}
-                aria-invalid={!!errors.email}
+                aria-invalid={!!errors.first_name}
                 disabled={isLoading}
               />
-              {errors.email && (
-                <p className="text-sm text-destructive">{errors.email}</p>
+              {errors.first_name && (
+                <p className="text-sm text-destructive">{errors.first_name}</p>
               )}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="last_name">Last name</Label>
               <Input
-                id="password"
-                name="password"
-                type="password"
-                placeholder="Create a password"
-                value={formData.password}
+                id="last_name"
+                name="last_name"
+                type="text"
+                placeholder="Doe"
+                value={formData.last_name}
                 onChange={handleChange}
-                aria-invalid={!!errors.password}
+                aria-invalid={!!errors.last_name}
                 disabled={isLoading}
               />
-              {errors.password && (
-                <p className="text-sm text-destructive">{errors.password}</p>
+              {errors.last_name && (
+                <p className="text-sm text-destructive">{errors.last_name}</p>
               )}
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm password</Label>
-              <Input
-                id="confirmPassword"
-                name="confirmPassword"
-                type="password"
-                placeholder="Confirm your password"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                aria-invalid={!!errors.confirmPassword}
-                disabled={isLoading}
-              />
-              {errors.confirmPassword && (
-                <p className="text-sm text-destructive">{errors.confirmPassword}</p>
-              )}
-            </div>
-          </CardContent>
-          <CardFooter className="flex flex-col space-y-4">
-            <Button
-              type="submit"
-              className="w-full"
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              placeholder="name@example.com"
+              value={formData.email}
+              onChange={handleChange}
+              aria-invalid={!!errors.email}
               disabled={isLoading}
+            />
+            {errors.email && (
+              <p className="text-sm text-destructive">{errors.email}</p>
+            )}
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="password">Password</Label>
+            <Input
+              id="password"
+              name="password"
+              type="password"
+              placeholder="Create a password"
+              value={formData.password}
+              onChange={handleChange}
+              aria-invalid={!!errors.password}
+              disabled={isLoading}
+            />
+            {errors.password && (
+              <p className="text-sm text-destructive">{errors.password}</p>
+            )}
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="confirmPassword">Confirm password</Label>
+            <Input
+              id="confirmPassword"
+              name="confirmPassword"
+              type="password"
+              placeholder="Confirm your password"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              aria-invalid={!!errors.confirmPassword}
+              disabled={isLoading}
+            />
+            {errors.confirmPassword && (
+              <p className="text-sm text-destructive">{errors.confirmPassword}</p>
+            )}
+          </div>
+        </CardContent>
+        <CardFooter className="flex flex-col space-y-4">
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={isLoading}
+          >
+            {isLoading ? "Creating account..." : "Create account"}
+          </Button>
+          <p className="text-sm text-center text-muted-foreground">
+            Already have an account?{" "}
+            <Link
+              href="/login"
+              className="text-primary hover:underline font-medium"
             >
-              {isLoading ? "Creating account..." : "Create account"}
-            </Button>
-            <p className="text-sm text-center text-muted-foreground">
-              Already have an account?{" "}
-              <Link
-                href="/login"
-                className="text-primary hover:underline font-medium"
-              >
-                Sign in
-              </Link>
-            </p>
-          </CardFooter>
-        </form>
-      </Card>
-    </div>
-    </RequireGuest>
+              Sign in
+            </Link>
+          </p>
+        </CardFooter>
+      </form>
+    </Card>
+  </div>
+  )
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      </div>
+    }>
+      <RequireGuest>
+        <RegisterForm />
+      </RequireGuest>
+    </Suspense>
   )
 }
