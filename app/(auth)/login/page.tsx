@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, FormEvent } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
 import { useLoginMutation } from "@/states/features/endpoints/auth/authApiSlice"
 import { useDispatch } from "react-redux"
@@ -15,6 +15,7 @@ import RequireGuest from "@/components/auth/RequireGuest"
 
 export default function LoginPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const dispatch = useDispatch()
   const [login, { isLoading }] = useLoginMutation()
 
@@ -57,7 +58,10 @@ export default function LoginPage() {
         dispatch(setAuth())
       }
       toast.success("Login successful!")
-      router.push("/listing")
+
+      // Get redirect param if it exists, otherwise default to /listing
+      const redirect = searchParams.get('redirect') || '/listing'
+      router.push(redirect)
     } catch (err: any) {
       console.error("Login error:", err)
       if (err.status === 401) {
