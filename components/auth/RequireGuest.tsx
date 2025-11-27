@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { useSelector } from "react-redux"
 import { selectIsAuthenticated, selectIsLoading } from "@/states/features/slices/auth/authSlice"
 
@@ -11,14 +11,18 @@ interface RequireGuestProps {
 
 export default function RequireGuest({ children }: RequireGuestProps) {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const isAuthenticated = useSelector(selectIsAuthenticated)
   const isLoading = useSelector(selectIsLoading)
 
   useEffect(() => {
     if (!isLoading && isAuthenticated) {
-      router.push("/listing")
+      // Get redirect param if it exists
+      const redirect = searchParams.get('redirect')
+      // Redirect to the intended page or default to /listing
+      router.replace(redirect || '/listing')
     }
-  }, [isAuthenticated, isLoading, router])
+  }, [isAuthenticated, isLoading, router, searchParams])
 
   // Show loading state while checking authentication
   if (isLoading) {

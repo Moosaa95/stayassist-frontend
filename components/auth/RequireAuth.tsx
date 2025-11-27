@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, usePathname } from "next/navigation"
 import { useSelector } from "react-redux"
 import { selectIsAuthenticated, selectIsLoading } from "@/states/features/slices/auth/authSlice"
 
@@ -11,14 +11,16 @@ interface RequireAuthProps {
 
 export default function RequireAuth({ children }: RequireAuthProps) {
   const router = useRouter()
+  const pathname = usePathname()
   const isAuthenticated = useSelector(selectIsAuthenticated)
   const isLoading = useSelector(selectIsLoading)
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
-      router.push("/login")
+      // Redirect to login with current path as redirect parameter
+      router.replace(`/login?redirect=${encodeURIComponent(pathname)}`)
     }
-  }, [isAuthenticated, isLoading, router])
+  }, [isAuthenticated, isLoading, router, pathname])
 
   // Show loading state while checking authentication
   if (isLoading) {
@@ -32,7 +34,7 @@ export default function RequireAuth({ children }: RequireAuthProps) {
     )
   }
 
-  // Don't render children if not authenticated
+
   if (!isAuthenticated) {
     return null
   }
